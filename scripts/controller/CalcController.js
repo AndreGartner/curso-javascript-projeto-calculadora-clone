@@ -39,13 +39,36 @@ class CalcController {
     }
 
     getLastOperation() {
-        this._operation
+        return this._operation[this._operation.length - 1];
     }
 
-    addOperation(value) {
-        this._operation.push(value);
+    isOperator(value) {
+        return (['+', '-', '*', '%', '/'].indexOf(value) > -1);
+    } 
 
-        console.log(this._operation);
+    addOperation(value) {
+        if (this.getLastOperation() === undefined) {
+            return this._operation.push(value);
+        }
+
+        if (isNaN(this.getLastOperation())) {
+
+            if (this.isOperator(value)) {
+                return this._operation[this._operation.length - 1] = value;
+            }
+
+            return (!isNaN(value)) ? 
+                this._operation.push(value)
+            : 
+                console.log(`Outra coisa: ${value}`);
+        }
+
+        if (this.isOperator(value)) {
+            return this._operation.push(value);
+        }
+
+        const newValue = this.getLastOperation().toString() + value.toString();
+        return this._operation[this._operation.length - 1] = parseInt(newValue);
     }
 
     execBtn (value) {
@@ -59,27 +82,31 @@ class CalcController {
             break;
 
             case 'soma':
-            
+                this.addOperation('+');
             break;
 
             case 'subtracao':
-            
+                this.addOperation('-');
             break;
 
             case 'divisao':
-
+                this.addOperation('/');
             break;
 
             case 'multiplicacao':
-
+                this.addOperation('*');
             break;
 
             case 'porcento':
-
+                this.addOperation('%');
             break;
 
             case 'igual':
 
+            break;
+
+            case 'ponto':
+                this.addOperation('.');
             break;
 
             case '0':
@@ -99,6 +126,7 @@ class CalcController {
                 this.setError();
             break;
         }
+        console.log(this._operation);
     }
 
     initButtonsEvents () {
